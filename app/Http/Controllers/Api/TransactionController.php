@@ -13,6 +13,16 @@ use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
 {
+    public function index()
+    {
+        $user = Auth::user()->id;
+        $transaction = Transaction::with('listing')->whereUserId($user)->paginate();
+        return response()->json([
+            'success' => true,
+            'message' => 'Get all my transactions',
+            'data' => $transaction,
+        ]);
+    }
     private function __fullyBookedChecker(Store $request)
     {
         $listing = Listing::find($request->listing_id);
