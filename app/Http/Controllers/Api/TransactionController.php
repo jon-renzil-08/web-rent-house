@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Transaction\Store;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
 {
@@ -47,6 +48,28 @@ class TransactionController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Listing is ready to book',
+        ]);
+    }
+
+    public function store(Store $request)
+    {
+        $this->__fullyBookedChecker($request);
+
+        $user = Auth::user()->id;
+
+        $transaction = Transaction::create([
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'listing_id' => $request->listing_id,
+            'user_id' => $user,
+        ]);
+
+        $transaction->Listing;
+
+        return response()->json([
+            'success' => true,
+            'message' => 'New transaction created',
+            'data' => $transaction,
         ]);
     }
 }
